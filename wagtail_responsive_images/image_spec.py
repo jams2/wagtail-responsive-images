@@ -1,23 +1,22 @@
-import re
-
 from dataclasses import dataclass
-from typing import ClassVar
+from functools import cache
+
+from django.conf import settings
+
+from .apps import RESPONSIVE_IMAGES_BREAKPOINTS
+
+
+@cache
+def get_breakpoints():
+    return getattr(
+        settings, "RESPONSIVE_IMAGES_BREAKPOINTS", RESPONSIVE_IMAGES_BREAKPOINTS
+    )
 
 
 @dataclass(frozen=True)
 class ImageSpec:
     breakpoint: str
     filter_spec: str
-    default_specs: ClassVar[str] = (
-        "sm(width-640),md(width-768),lg(width-1024),xl(width-1280),default(width-1536),"
-        "fallback(width-1280)"
-    )
-
-    pattern: ClassVar[re.Pattern] = re.compile(
-        r"(?P<breakpoint>(?:sm)|(?:md)|(?:lg)|(?:xl)|(?:2xl)|(?:default)|(?:fallback))"
-        r"\((?P<filter_spec>[^)]+)\)",
-        re.VERBOSE,
-    )
 
     @property
     def is_default(self):
@@ -29,7 +28,7 @@ class ImageSpec:
 
     @property
     def breakpoint_value(self):
-        return self.breakpoints.get(self.breakpoint)
+        return get_breakpoints().get(self.breakpoint)
 
     @property
     def media_query(self):
@@ -41,7 +40,3 @@ class ImageSpec:
         if self.is_default:
             return f"{rendition.width}px"
         return f"{self.media_query} {rendition.width}px"
-
-    @classmethod
-    def from_string(cls, spec: str) -> "ImageSpec":
-        return ImageSpec(*cls.pattern.match(spec).groups())
