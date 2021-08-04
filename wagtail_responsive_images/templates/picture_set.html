@@ -1,0 +1,15 @@
+<picture>
+    {% for source in sources %}
+        <source
+            type="{{ source.type }}"
+            srcset="{{ source.srcset }}"
+            {% if source.media %}media="{{ source.media }}"{% endif %}
+        >
+    {% endfor %}
+    <img
+        src="{{ src }}"
+        class="{{ attrs.class }}"
+        loading="{{ attrs.loading|default:'eager' }}"
+        alt="{{ attrs.alt }}"
+    >
+</picture>
