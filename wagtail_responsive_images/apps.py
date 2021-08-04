@@ -13,3 +13,5 @@ RESPONSIVE_IMAGES_BREAKPOINTS = {
     "lg": 1279,  # < 1280
     "xl": 1535,  # < 1536
 }
+
+RESPONSIVE_IMAGES_PSET_TEMPLATE = "wagtail_responsive_images/picture_set.html"
