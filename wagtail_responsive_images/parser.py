@@ -1,6 +1,7 @@
-from .image_spec import ImageSpec
-from lark import Lark, Transformer
+from lark import Lark
 from lark.visitors import Visitor_Recursive
+
+from .image_spec import ImageSpec
 
 grammar = """
 specs: spec | wrapped_spec+
@@ -28,7 +29,7 @@ FIELD_SEPARATOR: ","
 """
 
 
-class TreeToImageSpecs(Transformer):
+class TreeToImageSpecs(Visitor_Recursive):
     def filters(self, tree):
         return f"|{'|'.join(x.value for x in tree)}"
 
@@ -42,7 +43,6 @@ class TreeToImageSpecs(Transformer):
         return tokens[0].value
 
     def op(self, tree):
-        # breakpoint()
         return "-".join(tree)
 
     def crop_intensity(self, tokens):
@@ -63,25 +63,15 @@ class TreeToImageSpecs(Transformer):
 
 class ImageSpecGenerator(TreeToImageSpecs):
     def specs(self, arg_lists):
-        return (ImageSpec(*arg_list) for arg_list in arg_lists)
+        if len(arg_lists) == 1 and isinstance(arg_lists[0], str):
+            # One spec without a breakpoint, mark it as default.
+            yield ImageSpec("default", arg_lists[0])
+        else:
+            for arg_list in arg_lists:
+                yield ImageSpec(*arg_list)
+        raise StopIteration
 
 
-class CustomVisitor(Visitor_Recursive):
-    def crop_intensity(self, tokens):
-        return tokens[0].value
-
-    def parameter(self, tokens):
-        return tokens[0].value
-
-    def op_name(self, tokens):
-        return tokens[0].value
-
-    def filters(self, tokens):
-        return f"|{'|'.join(token for token in tokens)}"
-
-    def op(self, tokens):
-        return "-".join(tokens)
-
-
-parser = Lark(grammar, start="specs", parser="lalr", transformer=TreeToImageSpecs())
-# parser = Lark(grammar, start="specs", parser="lalr", transformer=CustomVisitor())
+parser = Lark(
+    grammar, start="specs", parser="lalr", transformer=TreeToImageSpecs(), cache=True
+)
