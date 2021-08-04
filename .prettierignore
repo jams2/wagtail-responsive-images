@@ -1,0 +1,11 @@
+*.html
+*.yml
+
+**/deployment
+**/staticfiles
+
+**/static/js/libs
+**/static/bootstrap-*
+**/static/fonts
+**/static/img
+**/static/icons

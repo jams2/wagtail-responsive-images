@@ -1,0 +1,55 @@
+exclude: |
+  (?x)(
+  deployment/|
+  migrations/|
+  uploads/|
+  staticfiles/|
+  libs/|
+  static/|
+  fonts/|
+  img/|
+  icons/|
+  __init__.py|
+  table_of_contents.html|
+  core/models/tags.py|
+  readme.md
+  )
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.4.0
+    hooks:
+      - id: check-yaml
+      - id: check-toml
+      - id: trailing-whitespace
+      - id: check-merge-conflict
+      - id: check-byte-order-marker
+      - id: check-case-conflict
+      - id: check-json
+      - id: debug-statements
+      - id: detect-private-key
+      - id: requirements-txt-fixer
+      - id: end-of-file-fixer
+  - repo: https://github.com/Lucas-C/pre-commit-hooks-bandit
+    rev: v1.0.4
+    hooks:
+      - id: python-bandit-vulnerability-check
+  - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
+    rev: v1.2.1
+    hooks:
+      - id: python-safety-dependencies-check
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v2.2.1
+    hooks:
+      - id: prettier
+  - repo: https://github.com/timothycrosley/isort
+    rev: 5.7.0
+    hooks:
+      - id: isort
+  - repo: https://github.com/psf/black
+    rev: 21.6b0
+    hooks:
+      - id: black
+  - repo: https://github.com/pycqa/flake8
+    rev: 3.9.2
+    hooks:
+      - id: flake8

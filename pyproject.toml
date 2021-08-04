@@ -1,0 +1,35 @@
+[tool.black]
+line-length = 88
+exclude = '''
+    /(
+        \.git
+      | \.hg
+      | \.mypy_cache
+      | \.tox
+      | \.venv
+      | _build
+      | buck-out
+      | build
+      | dist
+      | blib2to3
+      | tests/data
+      | migrations
+      | deployment
+      | uploads
+      | staticfiles
+    )/
+'''
+force_exclude = '''
+    /(
+        ^migrations/
+      | migrations
+    )/
+'''
+
+[tool.isort]
+# https://timothycrosley.github.io/isort/docs/configuration/options/
+profile = "black"
+force_single_line = "True"
+lines_between_types = 1
+lines_between_sections = 1
+combine_star = "True"
