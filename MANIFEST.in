@@ -1,0 +1,2 @@
+include README.md
+recursive-include wagtail_responsive_images/templates *

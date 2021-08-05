@@ -11,7 +11,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name="wagtail_responsive_images",
-    version="0.0.1",
+    version="0.0.2",
     author="Joshua Munn",
     author_email="jmunn@rkh.co.uk",
     description=("An app for generating responsive image sets with wagtail"),
