@@ -135,14 +135,17 @@ class PictureSetNode(template.Node):
         )
         sources = [pack_rendition(rendition, spec) for spec, rendition in renditions]
 
+        pset_context = {
+            "sources": sources,
+            "src": fallback_rendition.url if fallback_rendition else "",
+            "attrs": self.attrs,
+        }
+
         if self.output_var_name is not None:
-            context[self.output_var_name] = {
-                "sources": sources,
-                "src": fallback_rendition.url if fallback_rendition else "",
-                "attrs": self.attrs,
-            }
+            context[self.output_var_name] = pset_context
             return ""
         else:
+            context.update(pset_context)
             return context.template.engine.get_template(get_pset_template_str()).render(
                 context
             )

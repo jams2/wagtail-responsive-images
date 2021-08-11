@@ -21,6 +21,7 @@ __pycache__
 node_modules
 static_build
 .idea
+wagtail_responsive_images.egg-info
 
 nsbrc_website/static/css/main.css
 nsbrc_website/static/js/main.js
