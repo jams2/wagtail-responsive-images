@@ -19,34 +19,9 @@ register = template.Library()
 
 
 @cache
-def get_pset_template_str():
+def get_pset_template_name():
     return getattr(
         settings, "RESPONSIVE_IMAGES_PSET_TEMPLATE", RESPONSIVE_IMAGES_PSET_TEMPLATE
-    )
-
-
-@register.tag(name="pset")
-def compile_picture_set(parser, token):
-    output_var_name = None
-
-    try:
-        tag_name, image_expr, specs, *bits = token.split_contents()
-    except ValueError:
-        raise template.TemplateSyntaxError(
-            "pset expected `{% pset IMAGE SPECS (attr=value)* [as VARNAME] %}`",
-        )
-
-    image_expr = parser.compile_filter(image_expr)
-
-    if len(bits) > 1 and bits[-2] == "as":
-        output_var_name = bits[-1]
-        bits = bits[:-2]
-
-    attrs = token_kwargs(bits, parser)
-    webp = attrs.pop("webp", False)
-    image_specs = spec_parser.parse(specs)
-    return PictureSetNode(
-        image_expr, image_specs, output_var_name=output_var_name, attrs=attrs, webp=webp
     )
 
 
@@ -114,6 +89,31 @@ def pack_rendition(rendition: Rendition, spec: Optional[ImageSpec] = None) -> di
     return packed
 
 
+@register.tag(name="pset")
+def compile_picture_set(parser, token):
+    output_var_name = None
+
+    try:
+        tag_name, image_expr, specs, *bits = token.split_contents()
+    except ValueError:
+        raise template.TemplateSyntaxError(
+            "pset expected `{% pset IMAGE SPECS (attr=value)* [as VARNAME] %}`",
+        )
+
+    image_expr = parser.compile_filter(image_expr)
+
+    if len(bits) > 1 and bits[-2] == "as":
+        output_var_name = bits[-1]
+        bits = bits[:-2]
+
+    attrs = token_kwargs(bits, parser)
+    webp = attrs.pop("webp", False)
+    image_specs = spec_parser.parse(specs)
+    return PictureSetNode(
+        image_expr, image_specs, output_var_name=output_var_name, attrs=attrs, webp=webp
+    )
+
+
 class PictureSetNode(template.Node):
     def __init__(
         self, image_expr, image_specs, output_var_name=None, attrs=None, webp=False
@@ -138,7 +138,7 @@ class PictureSetNode(template.Node):
         pset_context = {
             "sources": sources,
             "src": fallback_rendition.url if fallback_rendition else "",
-            "attrs": self.attrs,
+            "attrs": {k: v.resolve(context) for k, v in self.attrs.items()},
         }
 
         if self.output_var_name is not None:
@@ -146,6 +146,6 @@ class PictureSetNode(template.Node):
             return ""
         else:
             context.update(pset_context)
-            return context.template.engine.get_template(get_pset_template_str()).render(
-                context
-            )
+            return context.template.engine.get_template(
+                get_pset_template_name()
+            ).render(context)
