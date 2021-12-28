@@ -28,7 +28,7 @@ def get_pset_template_name():
 def add_webp_rendition(left: list[ImageSpec], right: ImageSpec):
     return [
         *left,
-        ImageSpec(right.breakpoint, f"{right.filter_spec}|format-webp"),
+        ImageSpec(right.breakpoint_name, f"{right.filter_spec}|format-webp"),
         right,  # Put the webp first so the browser will prefer it
     ]
 

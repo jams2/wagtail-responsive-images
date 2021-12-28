@@ -1,4 +1,11 @@
+import django
+
+from django.conf import settings
+
 from .parser import parser
+
+settings.configure()
+django.setup()
 
 
 def test_successful_parse():
