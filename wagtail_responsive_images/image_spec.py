@@ -43,3 +43,9 @@ class ImageSpec:
         if self.is_default:
             return f"{rendition.width}px"
         return f"{self.media_query} {rendition.width}px"
+
+    def __str__(self):
+        return f"<ImageSpec: {self.filter_spec}>"
+
+    def __repr__(self):
+        return f'ImageSpec("{self.breakpoint_name}", "{self.filter_spec}")'
